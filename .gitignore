@@ -1,0 +1,3 @@
+vga_playground/db/*
+vga_playground/incremental_db/*
+vga_playground/output_files/*

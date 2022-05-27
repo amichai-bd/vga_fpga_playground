@@ -1,0 +1,25 @@
+Quartus Prime Archive log --	C:/Users/amich/OneDrive/Desktop/project/vga_fpga_playground/vga_playground/vga_playground_tmp_archive.qarlog
+
+Archive:	C:/Users/amich/OneDrive/Desktop/project/vga_fpga_playground/vga_playground/vga_playground_tmp_archive.qar
+Date:		Fri May 27 12:33:59 2022
+Quartus Prime		20.1.1 Build 720 11/11/2020 SJ Lite Edition
+
+	=========== Files Selected: ===========
+C:/Users/amich/OneDrive/Desktop/project/vga_fpga_playground/vga_playground/CPU_GARAGE.qsf
+C:/Users/amich/OneDrive/Desktop/project/vga_fpga_playground/vga_playground/CPU_GARAGE_assignment_defaults.qdf
+C:/Users/amich/OneDrive/Desktop/project/vga_fpga_playground/vga_playground/assignment_defaults.qdf
+C:/Users/amich/OneDrive/Desktop/project/vga_fpga_playground/vga_playground/sv/definitions.sv
+C:/Users/amich/OneDrive/Desktop/project/vga_fpga_playground/vga_playground/sv/seg7.sv
+C:/Users/amich/OneDrive/Desktop/project/vga_fpga_playground/vga_playground/sv/sync_gen.sv
+C:/Users/amich/OneDrive/Desktop/project/vga_fpga_playground/vga_playground/sv/top.sv
+C:/Users/amich/OneDrive/Desktop/project/vga_fpga_playground/vga_playground/vga_playground.qpf
+	======= Total: 8 files to archive =======
+
+	================ Status: ===============
+All files archived successfully.
+
+
+******* Archived project restoration attempt on Fri May 27 12:34:01 2022
+Source archive file:	C:/Users/amich/OneDrive/Desktop/project/vga_fpga_playground/vga_playground/vga_playground_tmp_archive.qar
+Archive was extracted into	C:/Users/amich/OneDrive/Desktop/project/vga_fpga_playground/
+		 - successfully.
