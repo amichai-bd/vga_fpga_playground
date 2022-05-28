@@ -9,18 +9,13 @@ module sync_gen(
         output logic  [9:0] CounterY
     );
     
-//=======================================//
-//				  Clock Divider				  //
-//=======================================//
-//VGA @ 640x480 resolution @ 60Hz requires a pixel clock of 25.175Mhz.
-//The Kiwi has an Onboard 50Mhz oscillator, we can divide it and get a 25Mhz clock.
-//It's not the exact frequency required for the VGA standard, but it works fine and it saves us the use of a PLL.
 logic h_sync, v_sync;
 logic next_h_sync, next_v_sync;
 logic CounterXmaxed, CounterYmaxed;
 logic NextinDisplayArea;
 
-//Maxed x y
+//VGA @ 640x480 resolution @ 60Hz requires a pixel clock of 25.175Mhz.
+//Maxed x = 800 , y = 525
 assign CounterXmaxed = (CounterX == 800) || Reset; // 16 + 48 + 96 + 640
 assign CounterYmaxed = (CounterY == 525) || Reset; // 10 + 2 + 33 + 480
 

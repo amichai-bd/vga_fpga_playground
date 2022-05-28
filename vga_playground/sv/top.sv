@@ -58,7 +58,7 @@ end
 
 assign CurentPixel = Display[pixel_y[8:0]][pixel_x[9:0]];
 
-//Only One or the other
+//Only One or the other (FPGA_ON vs SIMULATION_ON )
 `define FPGA_ON    
 //`define SIMULATION_ON
 
@@ -92,8 +92,6 @@ assign NextBLUE  = (inDisplayArea && SW[2]) ? {4{CurentPixel}} : '0;
 `MSFF(BLUE   , NextBLUE    , CLK_25)
 `MSFF(h_sync , next_h_sync , CLK_25)
 `MSFF(v_sync , next_v_sync , CLK_25)
-
-
 
 
 
