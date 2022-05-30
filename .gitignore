@@ -1,3 +1,7 @@
 vga_playground/db/*
 vga_playground/incremental_db/*
 vga_playground/output_files/*
+vga_playground/modelsim/work/*
+vga_playground/modelsim/*
+!vga_playground/modelsim/top_list.f
+!vga_playground/modelsim/work/README
