@@ -4,6 +4,7 @@
 
 //Source File (PKG, RTL, MACROS)
 ../sv/top_tb.sv
+../sv/ram2port_sim.sv
 ../sv/top.sv
 ../sv/seg7.sv
 ../sv/sync_gen.sv

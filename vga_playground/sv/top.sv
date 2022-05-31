@@ -40,7 +40,10 @@ logic [15:0]         VAdrsQ0;
 logic [15:0]         VAdrsQ1;
 logic [15:0]         PAdrsQ1;
 logic [15:0]         PAdrsQ2;
-logic [2:0]          PAdrsOffsetQ2;
+logic [15:0]         PAdrsQ3;
+logic [2:0]          PAdrsBitOffsetQ2;
+logic [2:0]          PAdrsBitOffsetQ3;
+logic [2:0]          PAdrsBitOffsetQ4;
 
 assign LineQ0   = pixel_y[8:0];
 assign VAdrsQ0  = 80*LineQ0 + pixel_x[9:3];  
@@ -51,8 +54,13 @@ assign VAdrsQ0  = 80*LineQ0 + pixel_x[9:3];
 
 assign PAdrsQ1 = (LineQ1/4)*320+(VAdrsQ1-(80*LineQ1))*4+(LineQ1%4);  
 `MSFF(PAdrsQ2    , PAdrsQ1     , CLK_25)
+`MSFF(PAdrsQ3    , PAdrsQ2     , CLK_25)
 
-assign PAdrsOffsetQ2  =  pixel_xQ2[2:0];
+assign PAdrsBitOffsetQ2  = pixel_xQ2[2:0];
+logic [1:0] PAdrsByteOffsetQ2;
+logic [1:0] PAdrsByteOffsetQ3;
+logic [1:0] PAdrsByteOffsetQ4;
+assign PAdrsByteOffsetQ2 = PAdrsQ2[1:0];
 always_comb begin
     PMem          = '0;
     PMem[4   + 0] = 8'b00000000;
@@ -97,16 +105,32 @@ always_comb begin
     PMem[327 + 16]= 8'b00000000;
 end
 
-assign CurentPixel = PMem[PAdrsQ2][PAdrsOffsetQ2];
-
-//ram2port ram2port (
-//	.clock     (CLK_25),
-//	.data      (),
-//	.rdaddress (),
-//	.wraddress (),
-//	.wren      (),
-//	.q         ()
-//);
+//assign CurentPixel = PMem[PAdrsQ2][PAdrsBitOffsetQ2];
+logic [31:0] WrData;
+logic [31:0] RdDataQ4;
+logic [12:0] WrAddressQ2;
+assign WrAddressQ2 =   PAdrsQ2[15:2]; 
+assign WrData = {PMem[WrAddressQ2+3],PMem[WrAddressQ2+2],PMem[WrAddressQ2+1],PMem[WrAddressQ2+0]};
+assign WrEn = 1'b1;
+`ifdef SIMULATION_ON
+ram2port_sim ram2port_sim (
+`else
+ram2port ram2port (
+`endif
+	.clock     (CLK_25),
+    //Write
+	.data      (WrData),
+	.wraddress (WrAddressQ2),
+	.wren      (WrEn),
+	//Read
+    .rdaddress (PAdrsQ3[14:2]),//Word offset (not Byte)
+	.q         (RdDataQ4)
+);
+`MSFF(PAdrsBitOffsetQ3,  PAdrsBitOffsetQ2,  CLK_50)
+`MSFF(PAdrsBitOffsetQ4,  PAdrsBitOffsetQ3,  CLK_50)
+`MSFF(PAdrsByteOffsetQ3, PAdrsByteOffsetQ2, CLK_50)
+`MSFF(PAdrsByteOffsetQ4, PAdrsByteOffsetQ3, CLK_50)
+assign CurentPixel = RdDataQ4[{PAdrsByteOffsetQ4,PAdrsBitOffsetQ4}];
 
 
 //Only One or the other (FPGA_ON vs SIMULATION_ON )
