@@ -21,7 +21,7 @@ logic [1:0] BUTTON;
 assign BUTTON = {2{~Reset}};
 top top (
         .CLK_50(Clock),   //input  logic        CLK_50,
-        .SW('0),      //input  logic [3:0]  SW,
+        .SW('1),      //input  logic [3:0]  SW,
         .BUTTON(BUTTON),  //input  logic [1:0]  BUTTON,
         .HEX0(),        //output logic [6:0]  HEX0,
         .HEX1(),        //output logic [6:0]  HEX1,

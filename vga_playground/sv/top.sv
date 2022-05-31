@@ -33,7 +33,7 @@ logic        CurentPixel;
  
 assign Reset = ~BUTTON[0];
 
-logic [38399:0][0:7] PMem ;
+logic [360:0][0:7] PMem ;
 logic [8:0]          LineQ0;
 logic [8:0]          LineQ1;
 logic [15:0]         VAdrsQ0;
@@ -41,10 +41,13 @@ logic [15:0]         VAdrsQ1;
 logic [15:0]         PAdrsQ1;
 logic [15:0]         PAdrsQ2;
 logic [15:0]         PAdrsQ3;
+logic [13:0]         PAdrsWordQ3;
 logic [2:0]          PAdrsBitOffsetQ2;
 logic [2:0]          PAdrsBitOffsetQ3;
 logic [2:0]          PAdrsBitOffsetQ4;
-
+logic CurentPixelReference;
+logic [7:0] PMemByte;
+logic CurentPixelReference2;
 assign LineQ0   = pixel_y[8:0];
 assign VAdrsQ0  = 80*LineQ0 + pixel_x[9:3];  
 `MSFF( VAdrsQ1   , VAdrsQ0   , CLK_25)
@@ -55,6 +58,7 @@ assign VAdrsQ0  = 80*LineQ0 + pixel_x[9:3];
 assign PAdrsQ1 = (LineQ1/4)*320+(VAdrsQ1-(80*LineQ1))*4+(LineQ1%4);  
 `MSFF(PAdrsQ2    , PAdrsQ1     , CLK_25)
 `MSFF(PAdrsQ3    , PAdrsQ2     , CLK_25)
+assign PAdrsWordQ3 = PAdrsQ3[15:2];
 
 assign PAdrsBitOffsetQ2  = pixel_xQ2[2:0];
 logic [1:0] PAdrsByteOffsetQ2;
@@ -104,14 +108,86 @@ always_comb begin
     PMem[326 + 16]= 8'b01111000;
     PMem[327 + 16]= 8'b00000000;
 end
+assign CurentPixelReference  = PMem[PAdrsQ2][PAdrsBitOffsetQ2];
+//assign PMemByte              = PMem[PAdrsQ2];
+//assign CurentPixelReference2 = PMemByte[PAdrsBitOffsetQ2];
 
-//assign CurentPixel = PMem[PAdrsQ2][PAdrsBitOffsetQ2];
+
 logic [31:0] WrData;
 logic [31:0] RdDataQ4;
-logic [12:0] WrAddressQ2;
-assign WrAddressQ2 =   PAdrsQ2[15:2]; 
-assign WrData = {PMem[WrAddressQ2+3],PMem[WrAddressQ2+2],PMem[WrAddressQ2+1],PMem[WrAddressQ2+0]};
-assign WrEn = 1'b1;
+logic [13:0] WrAddressQ2;
+//assign WrAddressQ2 =   PAdrsQ2[15:2]; 
+logic [4:0] State;
+logic WrEn;
+logic [4:0] SampleReset;
+`RST_MSFF(State, State+1, CLK_25, SampleReset[4])
+always_comb begin
+        WrData      = '0;
+        WrAddressQ2 = '0;
+        WrEn        = '0;
+unique casez (State)
+    5'b000 : begin
+        WrData      = {PMem[7],PMem[6],PMem[5],PMem[4]};
+        WrAddressQ2 = 12'h1;
+        WrEn        = 1'b1;
+    end
+    5'b001 : begin
+        WrData      = {PMem[11],PMem[10],PMem[9],PMem[8]};
+        WrAddressQ2 = 12'h2;
+        WrEn        = 1'b1;
+    end
+    5'b010 : begin
+        WrData      = {PMem[15],PMem[14],PMem[13],PMem[12]};
+        WrAddressQ2 = 12'h3;
+        WrEn        = 1'b1;
+    end
+    5'b011 : begin
+        WrData      = {PMem[19],PMem[18],PMem[17],PMem[16]};
+        WrAddressQ2 = 12'h4;
+        WrEn        = 1'b1;
+    end
+    5'b100 : begin
+        WrData      = {PMem[23],PMem[22],PMem[21],PMem[20]};
+        WrAddressQ2 = 12'h5;
+        WrEn        = 1'b1;
+    end
+    5'b101 : begin
+        WrData      = {PMem[327],PMem[326],PMem[325],PMem[324]};
+        WrAddressQ2 = 12'h51;
+        WrEn        = 1'b1;
+    end
+    5'b110 : begin
+        WrData      = {PMem[331],PMem[330],PMem[329],PMem[328]};
+        WrAddressQ2 = 12'h52;
+        WrEn        = 1'b1;
+    end
+    5'b111 : begin
+        WrData      = {PMem[335],PMem[334],PMem[333],PMem[332]};
+        WrAddressQ2 = 12'h53;
+        WrEn        = 1'b1;
+    end
+    5'b1000 : begin
+        WrData      = {PMem[339],PMem[338],PMem[337],PMem[336]};
+        WrAddressQ2 = 12'h54;
+        WrEn        = 1'b1;
+    end
+    5'b1001 : begin
+        WrData      = {PMem[343],PMem[342],PMem[341],PMem[340]};
+        WrAddressQ2 = 12'h55;
+        WrEn        = 1'b1;
+    end
+    default : begin
+        WrData      = '0;
+        WrAddressQ2 = '0;
+        WrEn        = '0;
+    end
+
+endcase 
+
+end
+
+//assign WrData = {PMem[PAdrsQ2+3],PMem[PAdrsQ2+2],PMem[PAdrsQ2+1],PMem[PAdrsQ2+0]};
+//assign WrEn = 1'b1;
 `ifdef SIMULATION_ON
 ram2port_sim ram2port_sim (
 `else
@@ -123,7 +199,7 @@ ram2port ram2port (
 	.wraddress (WrAddressQ2),
 	.wren      (WrEn),
 	//Read
-    .rdaddress (PAdrsQ3[14:2]),//Word offset (not Byte)
+    .rdaddress (PAdrsWordQ3),//Word offset (not Byte)
 	.q         (RdDataQ4)
 );
 `MSFF(PAdrsBitOffsetQ3,  PAdrsBitOffsetQ2,  CLK_50)
@@ -139,7 +215,6 @@ assign CurentPixel = RdDataQ4[{PAdrsByteOffsetQ4,PAdrsBitOffsetQ4}];
 `endif
 
 
-logic [4:0] SampleReset;
 assign SampleReset[0] = Reset;
 `MSFF(SampleReset[4:1], SampleReset[3:0], CLK_50)
 //gen Clock 25Mhz
@@ -162,9 +237,11 @@ sync_gen sync_inst(
 .inDisplayArea  (inDisplayArea) //output
 );
 
-assign NextRED   = (inDisplayArea && SW[0]) ? {4{CurentPixel}} : '0;
-assign NextGREEN = (inDisplayArea && SW[1]) ? {4{CurentPixel}} : '0;
-assign NextBLUE  = (inDisplayArea && SW[2]) ? {4{CurentPixel}} : '0;
+logic Final;
+assign Final = SW[3] ? CurentPixel : CurentPixelReference;
+assign NextRED   = (inDisplayArea && SW[0]) ? {4{Final}} : '0;
+assign NextGREEN = (inDisplayArea && SW[1]) ? {4{Final}} : '0;
+assign NextBLUE  = (inDisplayArea && SW[2]) ? {4{Final}} : '0;
 
 `MSFF(RED    , NextRED     , CLK_25)
 `MSFF(GREEN  , NextGREEN   , CLK_25)
