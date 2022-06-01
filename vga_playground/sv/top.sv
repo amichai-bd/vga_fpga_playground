@@ -45,6 +45,7 @@ pll_2 pll_2 (
     .c0     (CLK_25)     // output
 ); 
 `endif //FPGA_ON
+
 `RST_MSFF(State, State+1, CLK_25, SampleReset[4])
 always_comb begin
         WrData      = '0;
