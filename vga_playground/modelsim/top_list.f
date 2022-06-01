@@ -8,3 +8,4 @@
 ../sv/top.sv
 ../sv/seg7.sv
 ../sv/sync_gen.sv
+../sv/vga_ctrl.sv
