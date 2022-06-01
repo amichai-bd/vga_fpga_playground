@@ -14,7 +14,7 @@ end: clock_gen
 initial begin: reset_gen
     Reset = 1'b1;
 #40 Reset = 1'b0;
-#1000000 $finish;
+#100000 $finish;
 end: reset_gen
 
 logic [1:0] BUTTON;

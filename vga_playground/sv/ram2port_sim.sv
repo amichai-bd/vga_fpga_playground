@@ -13,11 +13,11 @@
 module ram2port_sim (
     input  logic        clock    ,
     //Write
-    input  logic [13:0] wraddress,
+    input  logic [12:0] wraddress,
     input  logic [31:0] data     ,
     input  logic        wren     ,
     //Read
-    input  logic [13:0] rdaddress,
+    input  logic [12:0] rdaddress,
     output logic [31:0] q
     );
 logic [7:0]  mem     [38400-1:0];
